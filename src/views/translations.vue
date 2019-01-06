@@ -48,9 +48,9 @@
                 </tr>
                 </tbody>
             </table>
-            <div v-if="rawTranslations !== '' && locale.length == 5">
+            <div v-if="rawTranslations !== '' && locale.length == 5" style="padding-top: 60px;">
             <br>
-            <h4>Preview {{"http://localhost:5000/" + locale}}</h4>
+                <h5>Preview Response for <strong>{{"http://localhost:5000/" + locale}}</strong></h5>
             <textarea v-model="rawTranslations" class="form-control" style="width: 100%;" rows="20"></textarea>
             </div>
         </div>
