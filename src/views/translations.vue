@@ -42,7 +42,7 @@
                     <th>{{td.text}}</th>
                     <td>{{td.lang}}</td>
                     <td style="text-align: right">
-                        <a href="#" class="badge badge-success" data-toggle="modal" data-target="#TranslateToModal" v-on:click="translate_country = ''; translate_language = '';">Translate To...</a>
+                        <a href="#" class="badge badge-success" data-toggle="modal" data-target="#TranslateToModal" v-on:click="translate_country = ''; translate_language = ''; previewText = '';">Translate To...</a>
                         <a href="#" class="badge badge-danger" data-toggle="modal" data-target="#DeleteModal">Delete</a>
                         </td>
                 </tr>
@@ -50,7 +50,7 @@
             </table>
         </div>
 
-        <!-- Edit Modal -->
+        <!-- Delete Modal -->
         <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="DeleteModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -65,7 +65,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal" v-on:click="deleteTranslationKey()">Delete</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" v-on:click="deleteTranslationKey()">Delete</button>
                     </div>
                 </div>
             </div>
@@ -76,7 +76,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="AddTranslationModalLabel">Add Translation Key</h5>
+                        <h5 class="modal-title" id="AddTranslationModalLabel">Add Translation Key for <strong>{{locale}}</strong></h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -134,26 +134,26 @@
                             <form>
                                 <div class="form-inline">
                                     <div class="form-group mb-2">
-                                        <label for="country_selection">Country </label>
+                                        <label for="country_selection" style="padding-right:15px;">Country </label>
                                         <select class="form-control" id="translate_country_selection" v-model="translate_country">
                                             <option v-for="country in countries" :value="country" v-bind:key="country">{{country}}
                                             </option>
                                         </select>
                                     </div>
                                     <div class="form-group mx-sm-3 mb-2">
-                                        <label for="lang_selection">Language </label>
+                                        <label for="lang_selection" style="padding-right:15px;">Language </label>
                                         <select class="form-control" id="translate_lang_selection" v-model="translate_language" v-on:change="PreviewTranslationKey">
                                             <option v-for="(language, index) in languages" :value="language" v-bind:key="index">
                                                 {{language}}
                                             </option>
                                         </select>
                                     </div>
-                                    <br>
-                                    <div class="form-group" v-if="this.previewText !== ''">
-                                        <label for="preview_text">Translates to... </label>
-                                        <textarea id="preview_text" class="form-control" v-model="previewText" rows="3" disabled></textarea>
                                     </div>
-                                    </div>
+                                <br>
+                                <div class="form-group" v-if="this.previewText !== ''">
+                                    <label for="preview_text">Translates to... </label>
+                                    <textarea id="preview_text" class="form-control" v-model="previewText" rows="3" style="width:100%"></textarea>
+                                </div>
                             </form>
                         </div>
                         <div v-else>
@@ -271,7 +271,6 @@
                 });
             },
             PreviewTranslationKey: function() {
-                this.previewText = "";
                 this.axios.post('http://localhost:5000/translate', {
                         'key': this.selectedKey,
                         'source_locale': this.locale,
@@ -286,12 +285,11 @@
                 });
             },
             TranslateTranslationKey: function() {
-                this.previewText = "";
                 this.axios.post('http://localhost:5000/translate', {
                     'key': this.selectedKey,
                     'source_locale': this.locale,
                     'target_locale': this.targetLocale,
-                    'text': "",
+                    'text': this.previewText,
                     'create_key': true
                     }
                 ).then(res => {
