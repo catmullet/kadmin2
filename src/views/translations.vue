@@ -4,6 +4,8 @@
             <h2>Translations</h2>
             <hr>
             <br>
+            <div class="card">
+                <div class="card-body">
             <form>
                 <div class="form-row align-items-center">
                 <div class="col-2">
@@ -44,7 +46,11 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
             <br>
+            <div class="card">
+            <div class="card-body">
             <div class="form-group">
                 <input class="form-control" id="filter" placeholder="Filter Translations" type="text" v-model="filter" v-on:keyup="updateTable">
             </div>
@@ -71,6 +77,8 @@
                 </tr>
                 </tbody>
             </table>
+            </div>
+            </div>
             <div style="padding-top: 60px;" v-if="rawTranslations !== '' && locale.length == 5">
             <br>
                 <h5>Response Preview for <strong>{{"http://localhost:5000/" + locale}}</strong></h5>
@@ -79,7 +87,7 @@
         </div>
 
         <!-- Delete Modal -->
-        <div aria-hidden="true" aria-labelledby="DeleteModalLabel" class="modal fade" id="DeleteModal" role="dialog" tabindex="-1">
+        <div aria-hidden="true" aria-labelledby="DeleteModalLabel" class="modal" id="DeleteModal" role="dialog" tabindex="-1">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -100,7 +108,7 @@
         </div>
 
         <!-- Add Translation Modal -->
-        <div aria-hidden="true" aria-labelledby="AddTranslationModalLabel" class="modal fade" id="AddTranslationModal" role="dialog" tabindex="-1">
+        <div aria-hidden="true" aria-labelledby="AddTranslationModalLabel" class="modal" id="AddTranslationModal" role="dialog" tabindex="-1">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -148,7 +156,7 @@
         </div>
 
         <!-- Translate Modal -->
-        <div aria-hidden="true" aria-labelledby="TranslateToModalModalLabel" class="modal fade" id="TranslateToModal" role="dialog" tabindex="-1">
+        <div aria-hidden="true" aria-labelledby="TranslateToModalModalLabel" class="modal" id="TranslateToModal" role="dialog" tabindex="-1">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -316,7 +324,12 @@
                 ).then(res => {
                     if(res.status == 200) {
                         this.previewText = res.data;
+                    } else {
+                        this.previewText = ""
                     }
+                }).catch(e => {
+                    console.log(e);
+                    this.previewText = ""
                 });
             },
             TranslateTranslationKey: function() {
