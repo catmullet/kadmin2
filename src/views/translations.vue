@@ -42,8 +42,8 @@
                     <th>{{td.text}}</th>
                     <td>{{td.lang}}</td>
                     <td style="text-align: right">
-                        <a href="#" class="badge badge-success" data-toggle="modal" data-target="#TranslateToModal" v-on:click="translate_country = ''; translate_language = ''; previewText = '';">Translate To...</a>
-                        <a href="#" class="badge badge-danger" data-toggle="modal" data-target="#DeleteModal">Delete</a>
+                        <a href="#" class="badge badge-primary" data-toggle="modal" data-target="#TranslateToModal" style="border-bottom-right-radius: 0; border-top-right-radius: 0" v-on:click="translate_country = ''; translate_language = ''; previewText = '';">Translate To...</a>
+                        <a href="#" class="badge badge-danger" data-toggle="modal" data-target="#DeleteModal" style="border-bottom-left-radius: 0; border-top-left-radius: 0">Delete</a>
                         </td>
                 </tr>
                 </tbody>
@@ -236,7 +236,7 @@
                         newTrans.text = translationKeys[key];
                         newTrans.lang = this.lang;
                         if(this.filter !== ""){
-                            if (newTrans.key.toLowerCase().indexOf(this.filter) !== -1 || newTrans.text.toLowerCase().indexOf(this.filter) !== -1){
+                            if (newTrans.key.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1 || newTrans.text.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1){
                                 translations.push(newTrans)
                             }
                         } else {
