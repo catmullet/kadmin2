@@ -48,6 +48,11 @@
                 </tr>
                 </tbody>
             </table>
+            <div v-if="rawTranslations !== '' && locale.length == 5">
+            <br>
+            <h4>Preview {{"http://localhost:5000/" + locale}}</h4>
+            <textarea v-model="rawTranslations" class="form-control" style="width: 100%;" rows="20"></textarea>
+            </div>
         </div>
 
         <!-- Delete Modal -->
@@ -195,7 +200,8 @@
                 key_text: "",
                 translate_country: "",
                 translate_language: "",
-                previewText: ""
+                previewText: "",
+                rawTranslations: {}
             }
         },
         computed: {
@@ -227,7 +233,7 @@
             updateTable: function () {
                 this.axios.get('http://localhost:5000/' + this.locale, ).then(res => {
                     let translations = [];
-
+                    this.rawTranslations = JSON.stringify(res.data, undefined, 4);
                     let translationKeys = this.flattenObject(res.data);
 
                     Object.keys(translationKeys).forEach(key => {
