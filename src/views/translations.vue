@@ -33,7 +33,7 @@
                     <th scope="col">Key</th>
                     <th scope="col">Text</th>
                     <th scope="col">Language</th>
-                    <th scope="col" style="text-align: right" align="right"><button class="btn btn-success" data-toggle="modal" data-target="#AddTranslationModal">+ Add Translation</button></th>
+                    <th scope="col" style="text-align: right" align="right"><button class="btn btn-success" data-toggle="modal" data-target="#AddTranslationModal" v-on:click="key_one = ''; key_two = ''; key_three = ''; key_text = '';">+ Add Translation</button></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -103,7 +103,7 @@
                         </form>
                         </div>
                         <div v-else>
-                            <strong>Required</strong> Select a country and language first.
+                            <strong>(Required)</strong> Select a country and language first.
                         </div>
                     </div>
                     <div class="modal-footer">
