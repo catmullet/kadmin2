@@ -14,7 +14,7 @@
                             <input autocomplete="off" checked id="option1" name="options" type="radio"> Pick
                         </label>
                         <label class="btn btn-secondary" v-on:click="countryLanguageToggle = false">
-                            <input autocomplete="off" id="option3" name="options" type="radio"> New Country/Lanuage
+                            <input autocomplete="off" id="option3" name="options" type="radio"> New Country/Language
                         </label>
                     </div>
                 </div>
@@ -54,14 +54,38 @@
             <div class="form-group">
                 <input class="form-control" id="filter" placeholder="Filter Translations" type="text" v-model="filter" v-on:keyup="updateTable">
             </div>
+                <div>
+                    <table class="table">
+                        <tr>
+                            <td style="vertical-align: bottom;">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-sm btn-secondary active" v-on:click="filterFirstLetterActive = false; updateTable()">
+                                    <input autocomplete="off" checked id="" v-model="filterFirstLetterActive" name="firstletteractiveoff" type="radio"> off
+                                </label>
+                                <label class="btn btn-sm btn-secondary" v-on:click="filterFirstLetterActive = true; updateTable()">
+                                    <input autocomplete="off" id="firstletteractiveon" name="options" v-model="filterFirstLetterActive" type="radio" > on
+                                </label>
+                            </div>
+                            </td>
+                            <td v-for="(letter, index) in filterSelection" v-bind:key="index" v-on:click="filterFirstLetter = letter; updateTable()" style="text-align: center; padding: 10px; vertical-align: bottom;">
+                                <div v-if="filterFirstLetter == letter" style="background-color: gainsboro; border-radius:10px;">
+                                    <strong> {{letter}} </strong>
+                                </div>
+                                <div v-else style="cursor: pointer">
+                                    {{letter}}
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             <table class="table table-hover">
                 <thead class="thead-dark">
                 <tr>
                     <th scope="col">Key</th>
                     <th scope="col">Text</th>
                     <th scope="col">Language</th>
-                    <th align="right" scope="col" style="text-align: right">
-                        <button class="btn btn-sm btn-success" data-target="#AddTranslationModal" data-toggle="modal" v-on:click="key_one = ''; key_two = ''; key_three = ''; key_text = '';">+ Add Translation</button>
+                    <th align="right" scope="col" style="text-align: right" data-target="#AddTranslationModal" data-toggle="modal">
+                        <button class="btn btn-success" v-on:click="key_one = ''; key_two = ''; key_three = ''; key_text = '';">+ Add Translation</button>
                     </th>
                 </tr>
                 </thead>
@@ -186,7 +210,7 @@
                                     </div>
                                     </div>
                                 <br>
-                                <div class="form-group" v-if="this.previewText !== ''">
+                                <div class="form-group">
                                     <label for="preview_text">Translates to... </label>
                                     <textarea class="form-control" id="preview_text" rows="3" style="width:100%" v-model="previewText"></textarea>
                                 </div>
@@ -233,7 +257,10 @@
                 translate_language: "",
                 previewText: "",
                 rawTranslations: {},
-                countryLanguageToggle: true
+                countryLanguageToggle: true,
+                filterSelection: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+                filterFirstLetter: "",
+                filterFirstLetterActive: false
             }
         },
         computed: {
@@ -277,7 +304,19 @@
                             newTrans.key = key;
                             newTrans.text = translationKeys[key];
                             newTrans.lang = this.lang;
-                            if (this.filter !== "") {
+                            if (this.filterFirstLetterActive) {
+                                if (newTrans.key.charAt(0).toLowerCase() !== this.filterFirstLetter.toLowerCase()) {
+                                    return;
+                                } else {
+                                    if (this.filter !== "") {
+                                        if (newTrans.key.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1 || newTrans.text.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) {
+                                            translations.push(newTrans)
+                                        }
+                                    } else {
+                                        translations.push(newTrans)
+                                    }
+                                }
+                            } else if (this.filter !== "") {
                                 if (newTrans.key.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1 || newTrans.text.toLowerCase().indexOf(this.filter.toLowerCase()) !== -1) {
                                     translations.push(newTrans)
                                 }
@@ -325,11 +364,11 @@
                     if(res.status == 200) {
                         this.previewText = res.data;
                     } else {
-                        this.previewText = ""
+                        this.previewText = "No Translation Available"
                     }
                 }).catch(e => {
                     console.log(e);
-                    this.previewText = ""
+                    this.previewText = "No Translation Available"
                 });
             },
             TranslateTranslationKey: function() {
