@@ -44,6 +44,9 @@
                         <label for="custom_lang">Language</label>
                         <input class="form-control" id="custom_lang" placeholder="language" type="text" v-model="lang">
                     </div>
+                    <div class="col" style="text-align: right; padding-top:40px">
+                        <button class="btn btn-sm btn-primary" data-target="#SyncModal" data-toggle="modal">Sync From Another Country/Language</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -232,6 +235,56 @@
                 </div>
             </div>
         </div>
+
+        <!-- Sync Modal -->
+        <div aria-hidden="true" aria-labelledby="SyncModalLabel" class="modal" id="SyncModal" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="SyncModalLabel">Translate To</h5>
+                        <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div v-if="country !== '' && lang !== ''">
+                            <form>
+                                <div class="form-inline">
+                                    <div class="form-group mb-2">
+                                        <label for="country_selection" style="padding-right:15px;">Country </label>
+                                        <select class="form-control" id="sync_country_selection" v-model="translate_country" v-on:change="translate_language = ''">
+                                            <option :value="country" v-bind:key="country" v-for="country in countries">{{country}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mx-sm-3 mb-2">
+                                        <label for="lang_selection" style="padding-right:15px;">Language </label>
+                                        <select class="form-control" id="sync_lang_selection" v-model="translate_language" v-on:change="PreviewTranslationKey">
+                                            <option :value="language" v-bind:key="index" v-for="(language, index) in translate_languages">
+                                                {{language}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div v-else>
+                            <strong>Required</strong> Select a country and language first.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+                        <div v-if="country !== '' && lang !== ''">
+                            <button class="btn btn-success" data-dismiss="modal" type="button" v-on:click="SyncTranslations()">Translate</button>
+                        </div>
+                        <div v-else>
+                            <button class="btn btn-block" disabled type="button">Translate</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -284,7 +337,7 @@
             }
         },
         beforeCreate() {
-            this.axios.get('http://localhost:5000/list_countries').then(res => {
+            this.axios.get('http://translate.us-east-1.elasticbeanstalk.com/list_countries').then(res => {
                 this.countriesAndLanguages = res.data;
             })
         },
@@ -294,7 +347,7 @@
             },
             updateTable: function () {
                 if (this.locale.length == 5) {
-                    this.axios.get('http://localhost:5000/' + this.locale,).then(res => {
+                    this.axios.get('http://translate.us-east-1.elasticbeanstalk.com/' + this.locale,).then(res => {
                         let translations = [];
                         this.rawTranslations = JSON.stringify(res.data, undefined, 4);
                         let translationKeys = this.flattenObject(res.data);
@@ -330,7 +383,7 @@
                 }
             },
             deleteTranslationKey: function() {
-                this.axios.post('http://localhost:5000/delete', {
+                this.axios.post('http://translate.us-east-1.elasticbeanstalk.com/delete', {
                         'key': this.selectedKey,
                         'locale': this.locale
                     }
@@ -341,7 +394,7 @@
                 });
             },
             addTranslationKey: function() {
-                this.axios.post('http://localhost:5000/add', {
+                this.axios.post('http://translate.us-east-1.elasticbeanstalk.com/add', {
                         'key': this.add_key,
                         'translation': this.key_text,
                         'locale': this.locale
@@ -353,7 +406,7 @@
                 });
             },
             PreviewTranslationKey: function() {
-                this.axios.post('http://localhost:5000/translate', {
+                this.axios.post('http://translate.us-east-1.elasticbeanstalk.com/translate', {
                         'key': this.selectedKey,
                         'source_locale': this.locale,
                         'target_locale': this.targetLocale,
@@ -372,12 +425,23 @@
                 });
             },
             TranslateTranslationKey: function() {
-                this.axios.post('http://localhost:5000/translate', {
+                this.axios.post('http://translate.us-east-1.elasticbeanstalk.com/translate', {
                     'key': this.selectedKey,
                     'source_locale': this.locale,
                     'target_locale': this.targetLocale,
                     'text': this.previewText,
                     'create_key': true
+                    }
+                ).then(res => {
+                    if(res.status == 200) {
+                        this.updateTable();
+                    }
+                });
+            },
+            SyncTranslations: function() {
+                this.axios.post('http://localhost:5000/sync', {
+                        'target_locale': this.locale,
+                        'source_locale': this.targetLocale,
                     }
                 ).then(res => {
                     if(res.status == 200) {
