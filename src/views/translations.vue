@@ -45,7 +45,7 @@
                         <input class="form-control" id="custom_lang" placeholder="language" type="text" v-model="lang">
                     </div>
                     <div class="col" style="text-align: right; padding-top:40px">
-                        <button class="btn btn-sm btn-primary" data-target="#SyncModal" data-toggle="modal">Sync From Another Country/Language</button>
+                        <button class="btn btn-sm btn-primary" data-target="#SyncModal" data-toggle="modal" type="button">Sync From Another Country/Language</button>
                     </div>
                 </div>
             </form>
@@ -439,7 +439,7 @@
                 });
             },
             SyncTranslations: function() {
-                this.axios.post('http://localhost:5000/sync', {
+                this.axios.post('http://translate.us-east-1.elasticbeanstalk.com/sync', {
                         'target_locale': this.locale,
                         'source_locale': this.targetLocale,
                     }
