@@ -445,8 +445,11 @@
                     }
                 ).then(res => {
                     if(res.status == 200) {
+                        console.log(res);
                         this.updateTable();
                     }
+                }).catch(e => {
+                    console.log(e);
                 });
             },
             flattenObject: function(data){
